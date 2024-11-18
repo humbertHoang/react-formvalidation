@@ -1,43 +1,50 @@
+import { useDispatch, useSelector } from "react-redux";
 import { useRef } from "react";
-
-const TableSinhVien = (props) => {
-  const { formData, handleDeleteSV, handleEditMode, handleSearchSV } = props;
+import { deleteSV, searchSV } from "../redux/reducers/sinhvienSlice.jsx";
+import { setSelectedSV } from "../redux/reducers/isEditModeSlice";
+const TableSinhVien = () => {
+  const listSV = useSelector((state) => state.sinhvien.listSV);
+  const searchListSV = useSelector((state) => state.sinhvien.searchListSV);
+  const dispatch = useDispatch();
   const searchInputRef = useRef(null);
-
-  const renderTable = formData.map((item) => (
-    <tr key={item.maSV}>
-      <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-        {item.maSV}
-      </td>
-      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-        {item.nameSV}
-      </td>
-      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-        {item.phoneSV}
-      </td>
-      <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-        {item.emailSV}
-      </td>
-      <td className="space-x-2 whitespace-nowrap px-0 py-2">
-        <button
-          className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
-          onClick={() => handleEditMode(item)}
-        >
-          Xem
-        </button>
-        <button
-          className="rounded bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
-          onClick={() => {
-            if (window.confirm("Bạn muốn xoá sinh viên này?")) {
-              handleDeleteSV(item.maSV);
-            }
-          }}
-        >
-          Xoá
-        </button>
-      </td>
-    </tr>
-  ));
+  const renderTable = (searchListSV.length > 0 ? searchListSV : listSV).map(
+    (item) => (
+      <tr key={item.maSV}>
+        <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+          {item.maSV}
+        </td>
+        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+          {item.nameSV}
+        </td>
+        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+          {item.phoneSV}
+        </td>
+        <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+          {item.emailSV}
+        </td>
+        <td className="space-x-2 whitespace-nowrap px-0 py-2">
+          <button
+            className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+            onClick={() => {
+              dispatch(setSelectedSV(item));
+            }}
+          >
+            Xem
+          </button>
+          <button
+            className="rounded bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700"
+            onClick={() => {
+              if (window.confirm("Bạn muốn xoá sinh viên này?")) {
+                dispatch(deleteSV(item.maSV));
+              }
+            }}
+          >
+            Xoá
+          </button>
+        </td>
+      </tr>
+    ),
+  );
   return (
     <>
       <form className="ms-auto max-w-md">
@@ -77,7 +84,8 @@ const TableSinhVien = (props) => {
             className="absolute bottom-2.5 end-2.5 rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300"
             onClick={(e) => {
               e.preventDefault();
-              handleSearchSV(searchInputRef.current.value);
+              console.log(searchInputRef.current.value);
+              dispatch(searchSV(searchInputRef.current.value.trim()));
               searchInputRef.current.value = "";
             }}
           >

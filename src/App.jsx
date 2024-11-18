@@ -1,5 +1,5 @@
 import { Provider } from "react-redux";
-import { store } from "./store/store.jsx";
+import { store } from "./redux/store.jsx";
 import SinhVien from "./pages/SinhVien.jsx";
 function App() {
   return (
